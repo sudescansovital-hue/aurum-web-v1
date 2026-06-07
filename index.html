@@ -2817,23 +2817,325 @@
 <!-- / ADMIN -->
 
 
-<!-- scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/supabase.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/datos.js"></script>
-<script src="js/agenda.js"></script>
-<script src="js/paneles.js"></script>
-<script src="js/app.js"></script>
-<script src="pages/salas/salas.js"></script>
-<script src="pages/evaluame/parser.js"></script>
-<script src="pages/evaluame/evalua.js"></script>
-<script src="pages/evaluame/historial.js"></script>
-<script src="pages/tablillas/tablillas.js"></script>
-<script src="pages/tablillas/preguntas.js"></script>
-<script src="gestion.js"></script>
-<script src="pages/mi-proceso/visitas.js"></script>
+  <script src="pages/evaluame/parser.js"></script>
+  <script src="pages/evaluame/evalua.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <script src="pages/salas/salas.js"></script>
+  <script src="pages/evaluame/historial.js"></script>
+  <script src="pages/tablillas/tablillas.js"></script>
+  <script src="pages/mi-proceso/visitas.js"></script>
+  <script src="pages/mi-gestion/gestion.js"></script>
+  <script src="pages/tablillas/preguntas.js"></script>
+<script>
+const ANIMALES_DATA = {
+  aguila: {
+    nombre:'Águila', nick:'Williams', tag:'Visión · Silencio',
+    body:'Williams no opera. Nunca lo ha hecho en público.<br><br>Creó Aurum Velare por dos razones: una inspiración que llevaba años madurando, y una necesidad real que vio en Roderas — alguien con proceso, con criterio, pero sin un lugar donde compartirlo sin ruido.<br><br>De esa combinación nació esto. Un espacio abierto a lo que cada usuario necesite: su propio proceso, su propio equipo, su propio animal.<br><br>El Águila no habla. Construye el marco y deja que los demás vuelen.',
+    cita:'"No todos los que observan están quietos. Algunos están construyendo algo que tú aún no puedes ver."'
+  },
+  leon: {
+    nombre:'León', nick:'Roderas', tag:'Presencia · Convicción',
+    body:'Roderas lleva tiempo en el proceso. Más del que quisiera reconocer.<br><br>Todavía no es rentable. Lo sabe, lo acepta, y lo dice sin disculparse — porque eso es exactamente lo que define al León: no huir de la verdad.<br><br>Perdió a la Hormiga en el camino. Al Elefante lo tiene cerca, pero el mercado no espera a nadie. Roderas sigue.<br><br>Creó esta web para compartir su proceso real, con sus datos, sus errores y sus ciclos. Gracias a la oportunidad que le brindó Williams, el Águila. Sin ella, esto no existiría.',
+    cita:'"Seguir sin ser rentable no es fracasar. Es la única forma honesta de aprender."'
+  },
+  hormiga: {
+    nombre:'Hormiga', nick:'Mara', tag:'Disciplina · Repetición',
+    body:'Mara fue scalper. De las pocas que entienden lo que significa estar delante de una pantalla hora tras hora sin romperse.<br><br>Estuvo mucho tiempo en el proceso. Junto a Roderas, construyendo, fallando, aprendiendo. Era metódica, constante — la hormiga que levanta lo que otros no ven.<br><br>Pero al final abandonó. El mercado no siempre premia a quien más trabaja, y Mara eligió salir.<br><br>Roderas la perdió. Y esa pérdida también forma parte del proceso. Su historia sigue aquí porque el camino no se borra cuando alguien se va.',
+    cita:'"Hay quien deja el proceso antes de ver los resultados. Eso también es una decisión válida."'
+  },
+  elefante: {
+    nombre:'Elefante', nick:'Toco', tag:'Memoria · Control emocional',
+    body:'Toco opera fuerte. Pero solo cuando hay que hacerlo.<br><br>No sobreopera. No persigue el mercado. Espera con una paciencia que muy pocos tienen, y cuando el momento llega — entra con el lotaje correcto, en el timeframe correcto, sin dudar.<br><br>Es el animal más cercano al León. No por jerarquía, sino por entendimiento mutuo: Roderas confía en su criterio, y Toco confía en el proceso.<br><br>El Elefante no olvida sus errores. Ahí está su verdadera fuerza.',
+    cita:'"La paciencia no es esperar. Es saber exactamente qué estás esperando."'
+  },
+  oso: {
+    nombre:'Oso', nick:'Equipo Roderas', tag:'Paciencia · Protección',
+    body:'El Oso puede entrar en el equipo del León.<br><br>Es el perfil que protege el capital antes que cualquier otra cosa. No ataca sin razón. Analiza, defiende, y cuando mueve — mueve con peso.<br><br>Si te reconoces en esta forma de operar, si quieres formar parte del proceso de Roderas — el espacio está abierto.<br><br>El equipo no se construye con prisa.',
+    cita:'"Un oso no necesita justificar por qué espera. El mercado aprende a respetarle."'
+  },
+  toro: {
+    nombre:'Toro', nick:'Equipo Roderas', tag:'Expansión · Momentum',
+    body:'El Toro también puede entrar en el equipo del León.<br><br>Es expansión pura cuando el mercado lo permite. Aprovecha el momentum, no lo fuerza. Sabe que hay momentos para empujar y momentos para detenerse — y rara vez los confunde.<br><br>Si tu proceso tiene esa energía, si reconoces el timing antes que los demás — el equipo de Roderas podría ser tu lugar.<br><br>Pero el Toro que entra sin proceso, entra y sale sin dejar huella.',
+    cita:'"La fuerza sin dirección no es momentum. Es ruido."'
+  },
+  lobo: {
+    nombre:'Lobo', nick:'Tu propio camino', tag:'Instinto · Adaptación',
+    body:'El Lobo no está en ningún equipo. Ni falta que le hace.<br><br>Es para quien quiere vivir su propio proceso, construir su propio equipo, o simplemente ser un animal distinto — uno que no aparece en esta web porque aún no tiene nombre.<br><br>Aurum Velare está abierto a eso. No todo el mundo necesita pertenecer a una estructura. Algunos necesitan crear la suya.<br><br>Si eres el Lobo, ya lo sabes.',
+    cita:'"El lobo no busca manada. Construye territorio."'
+  }
+};
+
+const ETAPAS_DATA = {
+  e0:  { num:'0',   nombre:'Silencio',     sub:'Observas sin operar',        body:'El punto de partida. Antes de operar un solo euro, el proceso empieza aquí — mirando, leyendo, entendiendo cómo se mueve XAU/USD sin tener nada en juego.<br><br>La mayoría saltea esta etapa con prisa. Los que la respetan llegan más lejos.<br><br>No es pasividad. Es preparación.',                              cita:'"El que observa sin actuar no está perdiendo el tiempo. Está construyendo criterio."' },
+  e05: { num:'0.5', nombre:'Umbral',        sub:'Primeros trades reales',     body:'El dinero entra en juego por primera vez. Los números dejan de ser teóricos y el ruido emocional aparece sin avisar.<br><br>Aquí se descubre si el análisis aguanta presión real o solo funcionaba en papel.<br><br>No se espera rentabilidad. Se espera honestidad con los datos.',                               cita:'"El primer trade real te dice más sobre ti que cien operaciones en demo."' },
+  e1:  { num:'1',   nombre:'Estructura',   sub:'Empiezas a ver patrones',    body:'Los datos empiezan a tener forma. Hay sesiones que se repiten, horarios que funcionan mejor, tipos de setup que encajan con tu forma de operar.<br><br>No es que el mercado haya cambiado. Es que tú empiezas a leerlo de otra manera.<br><br>La estructura no se impone — se descubre.',                            cita:'"Ver patrones no es magia. Es haber fallado suficientes veces como para reconocer lo que se repite."' },
+  e15: { num:'1.5', nombre:'Fractura',     sub:'Donde la mayoría abandona',  body:'La etapa más difícil del proceso. Los resultados no acompañan, la confianza se resiente y la mente empieza a buscar atajos o excusas.<br><br>Mara se fue aquí. Muchos otros también.<br><br>Los que continúan no lo hacen porque sea fácil. Lo hacen porque entienden que la fractura forma parte del camino.',    cita:'"La fractura no es un error del proceso. Es el proceso."' },
+  e2:  { num:'2',   nombre:'Claridad',     sub:'Sabes qué haces y por qué',  body:'Por primera vez, las decisiones tienen una razón clara detrás. No intuición, no esperanza — criterio.<br><br>Sabes qué tipo de trade funciona para ti, en qué condiciones entras, cuándo no operas. El ruido exterior deja de importar.<br><br>La claridad no llega de golpe. Se construye trade a trade.',         cita:'"Claridad no es certeza. Es saber actuar bien aunque el resultado sea incierto."' },
+  e25: { num:'2.5', nombre:'Consistencia', sub:'Los números se repiten',     body:'Lo que funcionó la semana pasada funciona esta semana. No siempre, pero con una regularidad que los datos confirman.<br><br>El edge existe. Ya no es fe — es evidencia.<br><br>Aquí empieza el trabajo real de afinar, no de cambiar.',                                                                                 cita:'"Consistencia no es ganar siempre. Es que los números cuenten la misma historia mes tras mes."' },
+  e3:  { num:'3',   nombre:'Confianza',    sub:'Operas sin dudar el proceso', body:'Las dudas no desaparecen, pero ya no paralizan. Ejecutas el plan aunque el mercado empuje en contra, porque confías en lo que los datos te han enseñado.<br><br>La confianza no viene del ego. Viene de haber visto los números suficientes veces como para saber que el proceso funciona.',                          cita:'"Confiar en el proceso no es ignorar el riesgo. Es saber gestionarlo sin perder la cabeza."' },
+  e4:  { num:'4',   nombre:'Rentabilidad', sub:'Los datos confirman el edge', body:'Los números son positivos de forma sostenida. No un mes excepcional — una tendencia real que los datos respaldan.<br><br>Roderas todavía no está aquí. Lo sabe y lo comparte sin filtro. Porque llegar a esta etapa fingiendo que ya estás no sirve a nadie.<br><br>La rentabilidad es consecuencia del proceso.',  cita:'"El trader rentable no es el que más sabe. Es el que menos se equivoca con lo mismo."' },
+  e45: { num:'4.5', nombre:'Vuelo',        sub:'Escalas con criterio',        body:'El capital crece, los lotajes también — pero con la misma lógica que funcionó en etapas anteriores. No se escala por ambición, se escala porque los datos lo permiten.<br><br>El vuelo sin criterio es caída libre. Con criterio, es el resultado natural de haber construido bien.',                                cita:'"Escalar sin proceso es apostar. Escalar con proceso es crecer."' },
+  e5:  { num:'5',   nombre:'✦ Oro',        sub:'El proceso es tuyo',          body:'No es el final. Es el punto donde el proceso ya no necesita validación externa — porque tú mismo eres la evidencia.<br><br>Aurum Velare no promete que llegues aquí. Promete que si llegas, lo habrás construido de verdad.<br><br>El oro no se regala. Se trabaja.',                                                  cita:'"Llegar al cinco no significa que hayas terminado. Significa que ya sabes cómo empezar de nuevo."' }
+};
+
+function abrirEtapa(id) {
+  const e = ETAPAS_DATA[id];
+  if (!e) return;
+  document.getElementById('etapa-num').textContent = e.num;
+  document.getElementById('etapa-nombre').textContent = e.nombre;
+  document.getElementById('etapa-sub').textContent = e.sub;
+  document.getElementById('etapa-body').innerHTML = e.body;
+  document.getElementById('etapa-cita').textContent = e.cita;
+  const modal = document.getElementById('modal-etapa');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarEtapa() {
+  document.getElementById('modal-etapa').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function abrirAnimal(id) {
+  const a = ANIMALES_DATA[id];
+  if (!a) return;
+  document.getElementById('animal-nombre').textContent = a.nombre;
+  document.getElementById('animal-nick').textContent = a.nick;
+  document.getElementById('animal-tag').textContent = a.tag;
+  document.getElementById('animal-body').innerHTML = a.body;
+  document.getElementById('animal-cita').textContent = a.cita;
+  const modal = document.getElementById('modal-animal');
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarAnimal() {
+  const modal = document.getElementById('modal-animal');
+  modal.style.display = 'none';
+  document.body.style.overflow = '';
+}
+</script>
+<script>
+function seleccionarSesion(el,valor){document.querySelectorAll('#agenda-sesiones>div').forEach(d=>{d.style.borderColor='var(--border)';d.style.background='#060810';d.style.color='var(--text-dim)'});el.style.borderColor='var(--gold)';el.style.background='#C9A84C0A';el.style.color='var(--gold-bright)';document.getElementById('agenda-hora').value=valor;}
+function abrirAgenda(){const m=document.getElementById('modal-agenda');m.style.display='flex';document.body.style.overflow='hidden';document.getElementById('agenda-fecha').min=new Date().toISOString().split('T')[0];}
+function cerrarAgenda(){document.getElementById('modal-agenda').style.display='none';document.body.style.overflow='';document.getElementById('agenda-msg').textContent='';}
+function guardarAgenda(){const fecha=document.getElementById('agenda-fecha').value,hora=document.getElementById('agenda-hora').value,msg=document.getElementById('agenda-msg');if(!fecha||!hora){msg.style.color='var(--red)';msg.textContent='Selecciona día y sesión.';return;}const d=new Date(fecha+'T12:00:00'),fechaStr=d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}),lista=document.getElementById('agenda-lista'),vacio=lista.querySelector('[style*="italic"]');if(vacio)vacio.remove();const item=document.createElement('div');item.style.cssText='display:flex;align-items:center;justify-content:space-between;background:#0A0C18;border:1px solid var(--border);padding:.6rem 1rem;margin-bottom:.4rem;';item.innerHTML=`<div><div style="font-size:13px;color:var(--text-dim);">${fechaStr}</div><div style="font-size:11px;color:var(--gold);">${hora}</div></div><div onclick="this.parentElement.remove()" style="font-size:12px;color:var(--text-muted);cursor:pointer;opacity:.5;padding:.2rem .5rem;">✕</div>`;lista.appendChild(item);msg.style.color='var(--green)';msg.textContent='✓ Disponibilidad registrada.';setTimeout(()=>cerrarAgenda(),1200);}
+</script>
+<script>
+// Auto-espaciado: mide los tabs y aplica el margen correcto a cada panel
+function aplicarEspaciadoPaneles() {
+  var tabsBar = document.querySelector('#page-gestion [style*="sticky"]');
+  if (!tabsBar) return;
+  var tabsH = tabsBar.offsetHeight; // altura de la barra de tabs ~44px
+  var espacioNecesario = tabsH + 16; // tabs + 16px de aire
+
+  var paneles = {
+    'gpanel-ciclo111':    document.querySelector('#gpanel-ciclo111 > div:first-child') || document.querySelector('#gpanel-ciclo111 [style*="grid-template-columns:140px"]'),
+    'gpanel-horarios':    document.querySelector('#gpanel-horarios > div:first-child'),
+    'gpanel-equity':      document.querySelector('#gpanel-equity > div:first-child'),
+    'gpanel-cumplimiento': document.querySelector('#gpanel-cumplimiento > div:first-child'),
+    'gpanel-estadisticas': document.querySelector('#gpanel-estadisticas > div:first-child'),
+    'gpanel-diario':       null, // ya tiene padding correcto
+    'gpanel-historial':    null  // ya tiene padding correcto
+  };
+
+  Object.keys(paneles).forEach(function(id) {
+    var el = paneles[id];
+    if (el) el.style.marginTop = espacioNecesario + 'px';
+  });
+
+  // Trade Record: el selector de cuentas
+  var trSelector = document.querySelector('#gpanel-trade-record [style*="grid-template-columns:repeat(4,1fr)"]');
+  if (trSelector) trSelector.style.marginTop = espacioNecesario + 'px';
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(aplicarEspaciadoPaneles, 200);
+});
+</script>
 <script src="js/admin.js"></script>
+<!-- Modal edición de usuario (admin) -->
+<div id="admin-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;">
+  <div style="background:var(--bg);border:1px solid #cc664466;padding:2rem;width:500px;max-width:95vw;position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="adminCerrarModal()" style="position:absolute;top:.8rem;right:1rem;background:transparent;border:1px solid var(--border);color:var(--text-muted);font-size:16px;line-height:1;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Cerrar">✕</button>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#cc9966;margin-bottom:.3rem;">Editar usuario</div>
+    <div id="admin-edit-email" style="font-size:13px;color:var(--text-muted);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border);"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Pack</label>
+        <select id="admin-edit-pack" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;font-family:inherit;">
+          <option value="umbral">Umbral</option>
+          <option value="raiz">Raíz</option>
+          <option value="senda">Senda</option>
+          <option value="cima">Cima</option>
+          <option value="demo">Demo</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Etapa</label>
+        <select id="admin-edit-etapa" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;font-family:inherit;">
+          <option value="0">Etapa 0 — Silencio</option>
+          <option value="1">Etapa 1 — Estructura</option>
+          <option value="2">Etapa 2 — Proceso</option>
+          <option value="3">Etapa 3 — Edge</option>
+          <option value="4">Etapa 4 — Sistema</option>
+          <option value="5">Etapa 5 — Vivir del trading</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Animal (sala)</label>
+        <select id="admin-edit-animal" onchange="adminActualizarSalaAsignada(this.value)" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;font-family:inherit;">
+          <option value="">Sin animal</option>
+          <option value="🐝">🐝 Hormiga</option>
+          <option value="🦁">🦁 León</option>
+          <option value="🐘">🐘 Elefante</option>
+          <option value="🐻">🐻 Oso</option>
+          <option value="🐂">🐂 Toro</option>
+          <option value="🐺">🐺 Lobo</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Sala asignada (auto)</label>
+        <div id="admin-edit-sala-asignada" style="padding:.5rem .7rem;font-size:13px;color:var(--gold-dim);background:var(--bg2);border:1px solid var(--border);min-height:2.2rem;">—</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1rem;">
+      <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Acceso sala extra</label>
+      <select id="admin-edit-acceso-sala" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;font-family:inherit;">
+        <option value="">Sin acceso extra</option>
+        <option value="Sala Hormiga">🐝 Sala Hormiga</option>
+        <option value="Sala León">🦁 Sala León</option>
+        <option value="Sala Elefante">🐘 Sala Elefante</option>
+        <option value="Sala Oso">🐻 Sala Oso</option>
+        <option value="Sala Toro">🐂 Sala Toro</option>
+        <option value="Sala Lobo">🐺 Sala Lobo</option>
+      </select>
+    </div>
+
+    <div id="admin-edit-dias-proceso" style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;padding:.5rem .7rem;border:1px solid var(--border);background:var(--bg2);">Días en proceso: —</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.6rem;margin-bottom:1rem;">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Cuenta Maestra</label>
+        <input id="admin-edit-maestra" type="text" placeholder="ej. 7747760" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--green);padding:.5rem .7rem;font-size:13px;box-sizing:border-box;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Cuenta Prueba</label>
+        <input id="admin-edit-prueba" type="text" placeholder="ej. 135146" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:#6A9AEE;padding:.5rem .7rem;font-size:13px;box-sizing:border-box;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Cuenta Retos</label>
+        <input id="admin-edit-retos" type="text" placeholder="ej. 4011477" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:#E8A84C;padding:.5rem .7rem;font-size:13px;box-sizing:border-box;font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;margin-bottom:1rem;">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Fecha de expiración</label>
+        <input id="admin-edit-exp" type="date" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;box-sizing:border-box;font-family:inherit;">
+      </div>
+      <div style="text-align:center;">
+        <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.6rem;">Activo</label>
+        <input id="admin-edit-activo" type="checkbox" style="width:18px;height:18px;cursor:pointer;accent-color:#cc9966;">
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <label style="font-size:11px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.4rem;">Notas internas</label>
+      <textarea id="admin-edit-notas" rows="3" placeholder="Notas privadas sobre este usuario..." style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem .7rem;font-size:13px;box-sizing:border-box;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+
+    <div style="display:flex;gap:.8rem;">
+      <button id="admin-guardar-btn" onclick="adminGuardarUsuario()" style="flex:1;padding:.7rem;background:transparent;border:1px solid #cc664466;color:#cc9966;cursor:pointer;font-size:13px;letter-spacing:.1em;">✦ Guardar cambios</button>
+      <button onclick="adminCerrarModal()" style="padding:.7rem 1.2rem;background:transparent;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:13px;">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- ========== PAGE: ONBOARDING ========== -->
+<div id="page-onboarding" class="page-content" style="display:none;min-height:100vh;background:var(--bg);padding:4rem 1.5rem;">
+  <div style="max-width:680px;margin:0 auto;">
+
+    <div style="text-align:center;margin-bottom:3rem;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:42px;color:var(--gold-bright);line-height:1.1;margin-bottom:1rem;">Bienvenido al proceso</div>
+      <div style="font-size:15px;color:var(--text-muted);line-height:1.8;">Antes de entrar elige tu animal y tu nick.<br>Define tu identidad en las salas y en el sistema.</div>
+    </div>
+
+    <!-- Nick -->
+    <div style="margin-bottom:2rem;">
+      <label style="font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:.6rem;">Tu nick</label>
+      <input id="onboarding-nick" type="text" placeholder="Cómo te conocerán en las salas..." maxlength="24"
+        style="width:100%;background:var(--bg2);border:1px solid var(--border-gold);color:var(--text);padding:.8rem 1rem;font-size:16px;box-sizing:border-box;font-family:inherit;outline:none;">
+    </div>
+
+    <!-- Animal selector -->
+    <div style="margin-bottom:2rem;">
+      <label style="font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold-dim);display:block;margin-bottom:1rem;">Tu animal</label>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;">
+
+        <div class="onboarding-animal-card" data-animal="🐝" onclick="seleccionarAnimal('🐝')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🐝</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">Hormiga</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Trabajo constante. La disciplina diaria construye el edge.</div>
+        </div>
+
+        <div class="onboarding-animal-card" data-animal="🦁" onclick="seleccionarAnimal('🦁')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🦁</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">León</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Liderazgo y visión. Opera con calma y decide desde la fortaleza.</div>
+        </div>
+
+        <div class="onboarding-animal-card" data-animal="🐘" onclick="seleccionarAnimal('🐘')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🐘</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">Elefante</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Memoria y paciencia. Cada trade queda grabado. El proceso es largo.</div>
+        </div>
+
+        <div class="onboarding-animal-card" data-animal="🐻" onclick="seleccionarAnimal('🐻')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🐻</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">Oso</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Fuerza y resistencia. Aguanta los drawdowns sin perder el rumbo.</div>
+        </div>
+
+        <div class="onboarding-animal-card" data-animal="🐂" onclick="seleccionarAnimal('🐂')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🐂</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">Toro</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Determinación. No abandona. El método es el camino.</div>
+        </div>
+
+        <div class="onboarding-animal-card" data-animal="🐺" onclick="seleccionarAnimal('🐺')"
+          style="background:var(--bg2);border:1px solid var(--border);padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color .15s,background .15s;">
+          <div style="font-size:32px;margin-bottom:.5rem;">🐺</div>
+          <div style="font-size:14px;color:var(--gold-bright);margin-bottom:.4rem;">Lobo</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">Instinto y manada. Opera en equipo, aprende del colectivo.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="onboarding-err" style="font-size:13px;color:var(--red);margin-bottom:1rem;min-height:1.2rem;"></div>
+
+    <button id="onboarding-btn" onclick="guardarOnboarding()"
+      style="width:100%;padding:1rem;background:transparent;border:1px solid var(--border-gold);color:var(--gold-bright);font-size:15px;letter-spacing:.15em;cursor:pointer;font-family:inherit;">
+      Entrar al proceso →
+    </button>
+
+  </div>
+</div>
+
 </body>
 </html>
